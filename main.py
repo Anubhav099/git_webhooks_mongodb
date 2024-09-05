@@ -1,11 +1,9 @@
-from fastapi import FastAPI, Request
-import uvicorn
+from flask import Flask, request, jsonify
 from datetime import datetime
 import json
 import pytz
 
-app = FastAPI()
-
+app = Flask(__name__)
 
 def format_timestamp(input_timestamp):
     if isinstance(input_timestamp, int):
@@ -27,11 +25,10 @@ def format_timestamp(input_timestamp):
 def print_webhook_message(message):
     print(f"\n{message}\n")
 
-
-@app.post("/")
-async def read_root(request: Request):
+@app.route("/", methods=["POST"])
+def read_root():
     if request.headers['Content-Type'] == 'application/json':
-        info = await request.json()
+        info = request.json
         # print(f"\n\n{json.dumps(info, indent=4)}\n\n")
 
         if 'pull_request' in info:
@@ -64,8 +61,7 @@ async def read_root(request: Request):
             for commit in info['commits']:
                 print_webhook_message(f'"{commit["author"]["name"]}" pushed to "{branch_name}" on {push_time}')
                 
-        return info
-
+        return jsonify(info)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=5000, log_level="info", reload=True)
+    app.run(port=5000, debug=True)
