@@ -2,8 +2,14 @@ from flask import Flask, request, jsonify
 from datetime import datetime
 import json
 import pytz
+from pymongo import MongoClient
 
 app = Flask(__name__)
+
+client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB URI
+db = client["WebHooks"]  # Replace with your database name
+collection = db["AutoGit"]  # Replace with your collection name
+
 
 def format_timestamp(input_timestamp):
     if isinstance(input_timestamp, int):
@@ -25,6 +31,13 @@ def format_timestamp(input_timestamp):
 def print_webhook_message(message):
     print(f"\n{message}\n")
 
+
+# Function to insert data into MongoDB
+def insert_into_mongo(data):
+    result = collection.insert_one(data)
+    print(f"Document inserted with _id: {result.inserted_id}")
+
+
 @app.route("/", methods=["POST"])
 def read_root():
     if request.headers['Content-Type'] == 'application/json':
@@ -44,12 +57,31 @@ def read_root():
                     Sample: "Travis" submitted a pull request from "staging" to "master" on 1st April 2021 - 9:00 AM UTC
                 """
                 print_webhook_message(f'"{author_name}" submitted a pull request from "{from_branch}" to "{to_branch}" on {action_time}')
+                mongo_data = {
+                    "request_id": info['pull_request']['id'],
+                    "author": author_name,
+                    "action": "PULL_REQUEST",
+                    "from_branch": from_branch,
+                    "to_branch": to_branch,
+                    "timestamp": action_time
+                }
+                insert_into_mongo(mongo_data)
+
             elif info['action'] == 'closed': # PR Merged
                 """
                     Format: {author} merged branch {from_branch} to {to_branch} on {timestamp}
                     Sample: "Travis" merged branch "dev" to "master" on 2nd April 2021 - 12:00 PM UTC
                 """
                 print_webhook_message(f'"{author_name}" merged branch "{from_branch}" to "{to_branch}" on {action_time}')
+                mongo_data = {
+                    "request_id": info['pull_request']['id'],
+                    "author": author_name,
+                    "action": "MERGE",
+                    "from_branch": from_branch,
+                    "to_branch": to_branch,
+                    "timestamp": action_time
+                }
+                insert_into_mongo(mongo_data)
                 
         else: # 'push' event
             """
