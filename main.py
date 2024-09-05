@@ -42,7 +42,7 @@ async def read_root(request: Request):
             to_branch = info['pull_request']['base']['ref']
             action_time = info['pull_request']['created_at']
 
-            print(f'"{author}" submitted a pull request from "{from_branch}" to "{to_branch}" on {timestamp}')
+            print(f'"{author_name}" submitted a pull request from "{from_branch}" to "{to_branch}" on {action_time}')
         else: # 'push' event
             """
                 Format: {author} pushed to {to_branch} on {timestamp}
@@ -52,7 +52,7 @@ async def read_root(request: Request):
             push_time = format_timestamp(info['repository']['pushed_at'])
 
             for commit in info['commits']:
-                print(f'"{self.author_name}" pushed to "{self.branch}" on {self.timestamp}')
+                print(f'"{commit["author"]["name"]}" pushed to "{branch_name}" on {push_time}')
                 
         return info
 
