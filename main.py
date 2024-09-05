@@ -50,6 +50,7 @@ def read_root():
                     Sample: "Travis" merged branch "dev" to "master" on 2nd April 2021 - 12:00 PM UTC
                 """
                 print_webhook_message(f'"{author_name}" merged branch "{from_branch}" to "{to_branch}" on {action_time}')
+                
         else: # 'push' event
             """
                 Format: {author} pushed to {to_branch} on {timestamp}
