@@ -4,7 +4,6 @@ from flask_cors import CORS
 import json
 import pytz
 from pymongo import MongoClient
-# from ..extensions import *   
 from app.extensions import *
 
 app_instance = Flask(__name__)
