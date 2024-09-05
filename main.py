@@ -9,7 +9,7 @@ app = FastAPI()
 @app.post("/")
 async def read_root(request: Request):
     if request.headers['Content-Type'] == 'application/json':
-        info = json.dumps(await request.json(), indent=4)
+        info = await request.json()
         print(f"{info = }")
         new_commit_id = info['after']
         repo_url = info['respository']['html_url']
