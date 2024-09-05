@@ -30,29 +30,37 @@ def format_timestamp(input_timestamp):
 async def read_root(request: Request):
     if request.headers['Content-Type'] == 'application/json':
         info = await request.json()
-        print(f"\n\n{json.dumps(info, indent=4)}\n\n")
+        # print(f"\n\n{json.dumps(info, indent=4)}\n\n")
 
-        # if 'pull_request' in info: # 'pull_request' event
-        #     """
-        #         Format: {author} submitted a pull request from {from_branch} to {to_branch} on {timestamp}
-        #         Sample: "Travis" submitted a pull request from "staging" to "master" on 1st April 2021 - 9:00 AM UTC
-        #     """
-        #     author_name = info['pull_request']['user']['login']
-        #     from_branch = info['pull_request']['head']['ref']
-        #     to_branch = info['pull_request']['base']['ref']
-        #     action_time = format_timestamp(info['pull_request']['created_at'])
+        if 'pull_request' in info:
+            
+            author_name = info['pull_request']['user']['login']
+            from_branch = info['pull_request']['head']['ref']
+            to_branch = info['pull_request']['base']['ref']
+            action_time = format_timestamp(info['pull_request']['created_at'])
 
-        #     print(f'"{author_name}" submitted a pull request from "{from_branch}" to "{to_branch}" on {action_time}')
-        # else: # 'push' event
-        #     """
-        #         Format: {author} pushed to {to_branch} on {timestamp}
-        #         Sample: "Travis" pushed to "staging" on 1st April 2021 - 9:30 PM UTC
-        #     """
-        #     branch_name = info['ref'].split('/')[-1]
-        #     push_time = format_timestamp(info['repository']['pushed_at'])
+            if info['action'] == 'opened': # PR Opened
+                """
+                    Format: {author} submitted a pull request from {from_branch} to {to_branch} on {timestamp}
+                    Sample: "Travis" submitted a pull request from "staging" to "master" on 1st April 2021 - 9:00 AM UTC
+                """
+                print(f'\n"{author_name}" submitted a pull request from "{from_branch}" to "{to_branch}" on {action_time}')
+            elif info['action'] == 'closed': # PR Merged
+                """
+                    Format: {author} merged branch {from_branch} to {to_branch} on {timestamp}
+                    Sample: "Travis" merged branch "dev" to "master" on 2nd April 2021 - 12:00 PM UTC
+                """
+                print(f'\n"{author_name}" merged branch "{from_branch}" to "{to_branch}" on {action_time}')
+        else: # 'push' event
+            """
+                Format: {author} pushed to {to_branch} on {timestamp}
+                Sample: "Travis" pushed to "staging" on 1st April 2021 - 9:30 PM UTC
+            """
+            branch_name = info['ref'].split('/')[-1]
+            push_time = format_timestamp(info['repository']['pushed_at'])
 
-        #     for commit in info['commits']:
-        #         print(f'"{commit["author"]["name"]}" pushed to "{branch_name}" on {push_time}')
+            for commit in info['commits']:
+                print(f'\n"{commit["author"]["name"]}" pushed to "{branch_name}" on {push_time}')
                 
         return info
 
