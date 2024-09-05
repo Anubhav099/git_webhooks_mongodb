@@ -30,7 +30,7 @@ def format_timestamp(input_timestamp):
 async def read_root(request: Request):
     if request.headers['Content-Type'] == 'application/json':
         info = await request.json()
-        print(f"{info = }")
+        print(f"\n{info = }\n\n")
 
         if 'pull_request' in info: # 'pull_request' event
             """
