@@ -5,15 +5,14 @@ import json
 app = FastAPI()
 
 def PushObj():
-    def __init__(self, author_name, branch, commit_message, commit_url, commit_author):
-        self.repo_url = repo_url
-        self.action_time = action_time
-        self.commit_message = commit_message
-        self.commit_url = commit_url
-        self.commit_author = commit_author
+    def __init__(self, author_name, branch, timestamp):
+        self.author_name = author_name
+        self.branch = branch
+        self.timestamp = timestamp
+        print(f"PushObj created: {self}")
 
     def __str__(self):
-        return f"Repo URL: {self.repo_url}\nAction Time: {self.action_time}\nCommit Message: {self.commit_message}\nCommit URL: {self.commit_url}\nCommit Author: {self.commit_author}"
+        return f'"{self.author_name}" pushed to "{self.branch}" on {self.timestamp}'
 
 # 2
 @app.post("/")
@@ -22,17 +21,26 @@ async def read_root(request: Request):
         info = await request.json()
         print(f"{info = }")
 
-        for commit in info['commits']:
-            commit['author']['name']
+        branch_name = info['ref'].split('/')[-1]
+        push_time = info['repository']['pushed_at']
+        if isinstance(push_time, str) and push_time[-1] == 'Z':
+            print(f"{push_time = }")
+        else:
+            print(f"{push_time = }")
 
-        new_commit_id = info['after'] if 'after' in info else None
+        if 'commits' in info:
+            for commit in info['commits']:
+                print(f"{commit['author']['name'] = }")
+                print(PushObj(commit['author']['name'], branch_name, push_time))
+                
 
-        repo_url = info['repository']['html_url']
-        action_time = info['repository']['pushed_at'] if 'pushed_at' in info['repository'] else None
-        if 'head_commit' in info:
-            commit_message = info['head_commit']['message']
-            commit_url = info['head_commit']['url']
-            commit_author = info['head_commit']['author']['username']
+        # new_commit_id = info['after'] if 'after' in info else None
+
+        # repo_url = info['repository']['html_url']
+        # if 'head_commit' in info:
+            # commit_message = info['head_commit']['message']
+            # commit_url = info['head_commit']['url']
+            # commit_author = info['head_commit']['author']['username']
 
         return info
 
