@@ -56,7 +56,7 @@ async def read_root(request: Request):
         if 'commits' in info:
             for commit in info['commits']:
                 print(f"{commit['author']['name'] = }")
-                print(PushObj(commit['author']['name'], branch_name, push_time))
+                PushObj(commit['author']['name'], branch_name, push_time)
                 
 
         # new_commit_id = info['after'] if 'after' in info else None
