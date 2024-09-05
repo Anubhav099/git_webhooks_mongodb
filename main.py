@@ -4,6 +4,31 @@ import json
 
 app = FastAPI()
 
+def convert_timestamp_to_ist(timestamp):
+    # Convert timestamp to UTC datetime object
+    utc_time = datetime.utcfromtimestamp(timestamp)
+    
+    # Define IST timezone (UTC+5:30)
+    ist_timezone = pytz.timezone('Asia/Kolkata')
+    
+    # Convert UTC time to IST
+    ist_time = utc_time.replace(tzinfo=pytz.utc).astimezone(ist_timezone)
+    
+    return ist_time
+
+def convert_iso_to_ist(iso_string):
+    # Parse the ISO 8601 string to a datetime object in UTC
+    utc_time = datetime.strptime(iso_string, "%Y-%m-%dT%H:%M:%S.%fZ")
+    
+    # Define IST timezone (UTC+5:30)
+    ist_timezone = pytz.timezone('Asia/Kolkata')
+    
+    # Convert UTC time to IST
+    ist_time = utc_time.replace(tzinfo=pytz.utc).astimezone(ist_timezone)
+    
+    return ist_time
+
+
 class PushObj:
     def __init__(self, author_name, branch, timestamp):
         self.author_name = author_name
@@ -25,8 +50,12 @@ async def read_root(request: Request):
         push_time = info['repository']['pushed_at']
         if isinstance(push_time, str) and push_time[-1] == 'Z':
             print(f"str {push_time = }")
+            push_time = convert_iso_to_ist(push_time)
         elif isinstance(push_time, int):
             print(f"int {push_time = }")
+            push_time = convert_timestamp_to_ist(push_time)
+        print(f"converted {push_time = }")
+
 
         if 'commits' in info:
             for commit in info['commits']:
