@@ -9,11 +9,15 @@ app = FastAPI()
 @app.post("/")
 async def read_root(request: Request):
     if request.headers['Content-Type'] == 'application/json':
-        info = json.dumps(await request.json())
+        info = json.dumps(await request.json(), indent=4)
         print(f"{info = }")
         new_commit_id = info['after']
         repo_url = info['respository']['html_url']
         action_time = info['repository']['pushed_at']
+        if 'head_commit' in info:
+            commit_message = info['head_commit']['message']
+            commit_url = info['head_commit']['url']
+            commit_author = info['head_commit']['author']['username']
 
         return info
 
