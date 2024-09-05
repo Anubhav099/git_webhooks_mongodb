@@ -12,7 +12,7 @@ async def read_root(request: Request):
         info = await request.json()
         print(f"{info = }")
         new_commit_id = info['after']
-        repo_url = info['respository']['html_url']
+        repo_url = info['repository']['html_url']
         action_time = info['repository']['pushed_at']
         if 'head_commit' in info:
             commit_message = info['head_commit']['message']
