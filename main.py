@@ -17,6 +17,8 @@ def read_root(request: Request):
     print(f"#{request.body() = }")
     print(f"#{request.body = }")
     if request.headers['Content-Type'] == 'application/json':
+        print(f"#{request.json = }")
+        print(f"#{request.json() = }")
         info = json.dumps(request.json())
         print(info)
         return info
