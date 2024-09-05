@@ -88,6 +88,7 @@ def read_root():
                 Format: {author} pushed to {to_branch} on {timestamp}
                 Sample: "Travis" pushed to "staging" on 1st April 2021 - 9:30 PM UTC
             """
+            
             branch_name = info['ref'].split('/')[-1]
             push_time = format_timestamp(info['repository']['pushed_at'])
 
