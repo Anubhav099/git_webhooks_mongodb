@@ -8,56 +8,21 @@ app = FastAPI()
 
 
 def format_timestamp(input_timestamp):
-    # Check if the input is an integer (UNIX timestamp)
     if isinstance(input_timestamp, int):
-        # Convert UNIX timestamp to a datetime object in UTC
         utc_time = datetime.utcfromtimestamp(input_timestamp)
-    
-    # Check if the input is a string (ISO format timestamp)
     elif isinstance(input_timestamp, str):
-        # Parse the ISO 8601 string into a datetime object
         utc_time = datetime.strptime(input_timestamp, "%Y-%m-%dT%H:%M:%SZ")
-    
     else:
-        raise ValueError("Invalid input format. Provide either an int or ISO 8601 string.")
+        return f"{input_timestamp}"
 
-    # Format the datetime object to the desired string format
     formatted_time = utc_time.strftime('%d %B %Y - %I:%M %p UTC')
-
-    # Handle special cases for the day (like 1st, 2nd, 3rd, etc.)
     day = utc_time.day
     if 4 <= day <= 20 or 24 <= day <= 30:
         suffix = "th"
     else:
         suffix = ["st", "nd", "rd"][day % 10 - 1]
     
-    # Return the final formatted string
     return utc_time.strftime(f'{day}{suffix} %B %Y - %I:%M %p UTC')
-
-
-def convert_timestamp_to_ist(timestamp):
-    # Convert timestamp to UTC datetime object
-    utc_time = datetime.utcfromtimestamp(timestamp)
-    
-    # Define IST timezone (UTC+5:30)
-    ist_timezone = pytz.timezone('Asia/Kolkata')
-    
-    # Convert UTC time to IST
-    ist_time = utc_time.replace(tzinfo=pytz.utc).astimezone(ist_timezone)
-    
-    return ist_time
-
-def convert_iso_to_ist(iso_string):
-    # Parse the ISO 8601 string to a datetime object in UTC
-    utc_time = datetime.strptime(iso_string, "%Y-%m-%dT%H:%M:%S.%fZ")
-    
-    # Define IST timezone (UTC+5:30)
-    ist_timezone = pytz.timezone('Asia/Kolkata')
-    
-    # Convert UTC time to IST
-    ist_time = utc_time.replace(tzinfo=pytz.utc).astimezone(ist_timezone)
-    
-    return ist_time
 
 
 class PushObj:
