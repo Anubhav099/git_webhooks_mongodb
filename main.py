@@ -6,6 +6,35 @@ import pytz
 
 app = FastAPI()
 
+
+def format_timestamp(input_timestamp):
+    # Check if the input is an integer (UNIX timestamp)
+    if isinstance(input_timestamp, int):
+        # Convert UNIX timestamp to a datetime object in UTC
+        utc_time = datetime.utcfromtimestamp(input_timestamp)
+    
+    # Check if the input is a string (ISO format timestamp)
+    elif isinstance(input_timestamp, str):
+        # Parse the ISO 8601 string into a datetime object
+        utc_time = datetime.strptime(input_timestamp, "%Y-%m-%dT%H:%M:%SZ")
+    
+    else:
+        raise ValueError("Invalid input format. Provide either an int or ISO 8601 string.")
+
+    # Format the datetime object to the desired string format
+    formatted_time = utc_time.strftime('%d %B %Y - %I:%M %p UTC')
+
+    # Handle special cases for the day (like 1st, 2nd, 3rd, etc.)
+    day = utc_time.day
+    if 4 <= day <= 20 or 24 <= day <= 30:
+        suffix = "th"
+    else:
+        suffix = ["st", "nd", "rd"][day % 10 - 1]
+    
+    # Return the final formatted string
+    return utc_time.strftime(f'{day}{suffix} %B %Y - %I:%M %p UTC')
+
+
 def convert_timestamp_to_ist(timestamp):
     # Convert timestamp to UTC datetime object
     utc_time = datetime.utcfromtimestamp(timestamp)
@@ -52,10 +81,9 @@ async def read_root(request: Request):
         push_time = info['repository']['pushed_at']
         if isinstance(push_time, str) and push_time[-1] == 'Z':
             print(f"str {push_time = }")
-            push_time = convert_iso_to_ist(push_time)
         elif isinstance(push_time, int):
             print(f"int {push_time = }")
-            push_time = convert_timestamp_to_ist(push_time)
+        push_time = format_timestamp(push_time)
         print(f"converted {push_time = }")
         print(push_time)
 
