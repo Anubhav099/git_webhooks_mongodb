@@ -43,6 +43,7 @@ async def read_root(request: Request):
             action_time = info['pull_request']['created_at']
 
             print(f'"{author_name}" submitted a pull request from "{from_branch}" to "{to_branch}" on {action_time}')
+            
         else: # 'push' event
             """
                 Format: {author} pushed to {to_branch} on {timestamp}
