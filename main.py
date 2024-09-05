@@ -93,6 +93,16 @@ def read_root():
 
             for commit in info['commits']:
                 print_webhook_message(f'"{commit["author"]["name"]}" pushed to "{branch_name}" on {push_time}')
+
+                mongo_data = {
+                    "request_id": commit['id'],
+                    "author": commit['author']['name'],
+                    "action": "PUSH",
+                    "from_branch": branch_name,
+                    "to_branch": branch_name,
+                    "timestamp": push_time
+                }
+                insert_into_mongo(mongo_data)
                 
         return jsonify(info)
 
