@@ -8,6 +8,11 @@ app = FastAPI()
 @app.post("/")
 def read_root(request: Request):
     print(f"{request = }")
+    print(f"{request.method = }")
+    print(f"{request.headers = }")
+    print(f"{request.headers['x-github-delivery']} = ")
+    print(f"{request.headers['x-github-event']} = ")
+    print(f"{request.headers['x-github-hook-installation-target-type'] = }")
     if request.headers['Content-Type'] == 'application/json':
         info = json.dumps(request.json)
         print(info)
