@@ -24,8 +24,10 @@ def format_timestamp(input_timestamp):
     
     return utc_time.strftime(f'{day}{suffix} %B %Y - %I:%M %p UTC')
 
+def print_webhook_message(message):
+    print(f"\n{message}\n")
 
-# 2
+
 @app.post("/")
 async def read_root(request: Request):
     if request.headers['Content-Type'] == 'application/json':
@@ -44,13 +46,13 @@ async def read_root(request: Request):
                     Format: {author} submitted a pull request from {from_branch} to {to_branch} on {timestamp}
                     Sample: "Travis" submitted a pull request from "staging" to "master" on 1st April 2021 - 9:00 AM UTC
                 """
-                print(f'\n"{author_name}" submitted a pull request from "{from_branch}" to "{to_branch}" on {action_time}')
+                print_webhook_message(f'"{author_name}" submitted a pull request from "{from_branch}" to "{to_branch}" on {action_time}')
             elif info['action'] == 'closed': # PR Merged
                 """
                     Format: {author} merged branch {from_branch} to {to_branch} on {timestamp}
                     Sample: "Travis" merged branch "dev" to "master" on 2nd April 2021 - 12:00 PM UTC
                 """
-                print(f'\n"{author_name}" merged branch "{from_branch}" to "{to_branch}" on {action_time}')
+                print_webhook_message(f'"{author_name}" merged branch "{from_branch}" to "{to_branch}" on {action_time}')
         else: # 'push' event
             """
                 Format: {author} pushed to {to_branch} on {timestamp}
@@ -60,7 +62,7 @@ async def read_root(request: Request):
             push_time = format_timestamp(info['repository']['pushed_at'])
 
             for commit in info['commits']:
-                print(f'\n"{commit["author"]["name"]}" pushed to "{branch_name}" on {push_time}')
+                print_webhook_message(f'"{commit["author"]["name"]}" pushed to "{branch_name}" on {push_time}')
                 
         return info
 
