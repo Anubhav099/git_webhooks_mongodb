@@ -8,19 +8,13 @@ app = FastAPI()
 # 2
 @app.post("/")
 async def read_root(request: Request):
-    print(f"{request = }")
-    print(f"{request.method = }")
-    print(f"{request.headers = }")
-    print(f"{request.headers['x-github-delivery']} = ")
-    print(f"{request.headers['x-github-event']} = ")
-    print(f"{request.headers['x-github-hook-installation-target-type'] = }")
-    print(f"#{await request.body() = }")
-    print(f"#{request.body = }")
     if request.headers['Content-Type'] == 'application/json':
-        print(f"#{request.json = }")
-        print(f"#{await request.json() = }")
         info = json.dumps(await request.json())
-        print(info)
+        print(f"{info = }")
+        new_commit_id = info['after']
+        repo_url = info['respository']['html_url']
+        action_time = info['repository']['pushed_at']
+
         return info
 
 
