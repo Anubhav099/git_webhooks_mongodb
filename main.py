@@ -24,9 +24,9 @@ async def read_root(request: Request):
         branch_name = info['ref'].split('/')[-1]
         push_time = info['repository']['pushed_at']
         if isinstance(push_time, str) and push_time[-1] == 'Z':
-            print(f"{push_time = }")
-        else:
-            print(f"{push_time = }")
+            print(f"str {push_time = }")
+        elif isinstance(push_time, int):
+            print(f"int {push_time = }")
 
         if 'commits' in info:
             for commit in info['commits']:
