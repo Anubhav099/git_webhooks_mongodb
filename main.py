@@ -4,7 +4,7 @@ import json
 
 app = FastAPI()
 
-def PushObj():
+class PushObj:
     def __init__(self, author_name, branch, timestamp):
         self.author_name = author_name
         self.branch = branch
