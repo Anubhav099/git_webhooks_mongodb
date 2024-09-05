@@ -57,6 +57,7 @@ async def read_root(request: Request):
             print(f"int {push_time = }")
             push_time = convert_timestamp_to_ist(push_time)
         print(f"converted {push_time = }")
+        print(push_time)
 
 
         if 'commits' in info:
