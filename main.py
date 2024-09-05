@@ -49,7 +49,7 @@ def read_root():
             author_name = info['pull_request']['user']['login']
             from_branch = info['pull_request']['head']['ref']
             to_branch = info['pull_request']['base']['ref']
-            action_time = format_timestamp(info['pull_request']['created_at'])
+            action_time = format_timestamp(info['pull_request']['updated_at'])
 
             if info['action'] == 'opened': # PR Opened
                 """
