@@ -4,6 +4,7 @@ import uvicorn
 app = FastAPI()
 
 
+# 2
 @app.post("/")
 def read_root(request: Request):
     print(f"{request = }")
