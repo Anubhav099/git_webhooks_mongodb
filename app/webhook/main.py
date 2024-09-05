@@ -1,14 +1,14 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
+from flask_cors import CORS
 import json
 import pytz
 from pymongo import MongoClient
+# from ..extensions import *   
+from app.extensions import *
 
-app = Flask(__name__)
-
-client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB URI
-db = client["WebHooks"]  # Replace with your database name
-collection = db["AutoGit"]  # Replace with your collection name
+app_instance = Flask(__name__)
+CORS(app_instance)
 
 
 def format_timestamp(input_timestamp):
@@ -38,7 +38,13 @@ def insert_into_mongo(data):
     print(f"Document inserted with _id: {result.inserted_id}")
 
 
-@app.route("/", methods=["POST"])
+@app_instance.route('/requests', methods=['GET'])
+def get_requests():
+    requests = list(collection.find({}, {'_id': 0}))
+    return jsonify(requests)
+
+
+@app_instance.route("/", methods=["POST"])
 def read_root():
     if request.headers['Content-Type'] == 'application/json':
         info = request.json
@@ -108,5 +114,3 @@ def read_root():
                 
         return jsonify(info)
 
-if __name__ == "__main__":
-    app.run(port=5000, debug=True)
